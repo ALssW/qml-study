@@ -1,3 +1,6 @@
+build
+.vs
+
 ### Qt template
 # C++ objects and libs
 *.slo
