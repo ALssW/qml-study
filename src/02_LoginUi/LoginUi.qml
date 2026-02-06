@@ -13,9 +13,7 @@ ApplicationWindow {
     title: "Login UI"
     visible: true // 默认窗口为不显示的
 
-
-    // 主体
-    Rectangle {
+    Rectangle { // 主体矩形
         height: parent.height
         width: parent.width
 
@@ -37,8 +35,7 @@ ApplicationWindow {
             }
         }
 
-        // 中间矩形
-        Rectangle {
+        Rectangle { // 中间矩形
             width: 800
             height: 500
             // 居中
@@ -49,7 +46,9 @@ ApplicationWindow {
 
             // 插入图片
             Image {
-                source: "res/image1.jpg"
+                x: 57
+                y: 100
+                source: "res/img-01.png"
             }
 
             Text {
@@ -70,6 +69,7 @@ ApplicationWindow {
                 height: 50
                 width: 300
                 font.pixelSize: 20
+                verticalAlignment: Text.AlignVCenter
                 placeholderText: qsTr("请输入用户名")
                 placeholderTextColor: "#999999"
                 color: "#666666"
@@ -80,6 +80,16 @@ ApplicationWindow {
                     color: "#e6e6e6"
                     border.color: "#e6e6e6"
                     radius: 25
+                }
+
+                // 图标插入
+                Image {
+                    // 动态切换图片
+                    source: username.activeFocus ? "res/u2.png" : "res/u1.png"
+                    width: 20
+                    height: 20
+                    x: 30
+                    y: 15
                 }
             }
 
@@ -94,6 +104,7 @@ ApplicationWindow {
                 color: "#333333"
                 placeholderText: qsTr("请输入密码")
                 placeholderTextColor: "#999999"
+                verticalAlignment: Text.AlignVCenter
                 leftPadding: username.leftPadding
                 echoMode: TextInput.Password
                 // 设置圆角边框
@@ -102,10 +113,20 @@ ApplicationWindow {
                     border.color: username.background.border.color
                     radius: 25
                 }
+
+                // 图标插入
+                Image {
+                    // 动态切换图片
+                    source: password.activeFocus ? "res/p2.png" : "res/p1.png"
+                    width: 20
+                    height: 20
+                    x: 30
+                    y: 15
+                }
             }
 
-            // 登陆
-            Button {
+            RoundButton { // 登录按钮
+                id: submit
                 x: username.x
                 y: password.y + password.height + 10
                 height: username.height
@@ -117,6 +138,52 @@ ApplicationWindow {
                 onClicked: {
                     print("登陆" + username.text + ":" + password.text);
                 }
+
+                background: Rectangle {
+                    radius: 25
+                    color: {
+                        // 当按钮点击时
+                        if (submit.down){
+                            return "#b01919"
+                        }
+
+                        // 当鼠标悬浮 时
+                        if (submit.hovered) {
+                            return "#333333"
+                        }
+
+                        // 常态颜色
+                        return "#57b846"
+                    }
+
+                    border.color: submit.backgroud.color
+
+                }
+            }
+        }
+
+        Rectangle { // 关闭窗口按钮
+            x: app.width - 35
+            y: 5
+            width: 30
+            height: 30
+            color: "#00000000"
+
+            Text {
+                text: "X"
+                font.pixelSize: 20
+                anchors.centerIn: parent
+            }
+
+            // 定义鼠标区域
+            MouseArea {
+                // 鼠标区域范围
+                anchors.fill: parent
+                hoverEnabled: true
+                // 鼠标进入时
+                onEntered: parent.color = "#18FFFFFF"
+                onExited:  parent.color = "#00000000"
+                onClicked: app.close()
             }
         }
 
