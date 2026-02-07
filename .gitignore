@@ -1,5 +1,6 @@
 build
 .vs
+.qtcreator
 
 ### Qt template
 # C++ objects and libs
