@@ -1,0 +1,7 @@
+<RCC>
+    <qresource>
+        <file>MyType.qml</file>
+        <file>qml_import.qml</file>
+        <file>qml_import.qmlproject</file>
+    </qresource>
+</RCC>
