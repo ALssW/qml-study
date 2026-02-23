@@ -1,0 +1,7 @@
+<RCC>
+    <qresource>
+        <file>10_pos_and_layout.qmlproject</file>
+        <file>anchors.qml</file>
+        <file>item_pos.qml</file>
+    </qresource>
+</RCC>
