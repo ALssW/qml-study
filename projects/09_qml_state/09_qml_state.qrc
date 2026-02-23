@@ -1,0 +1,6 @@
+<RCC>
+    <qresource>
+        <file>09_qml_state.qml</file>
+        <file>09_qml_state.qmlproject</file>
+    </qresource>
+</RCC>
