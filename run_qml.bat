@@ -1,3 +1,3 @@
 @echo off
 
-D:\dev\software\QT_A\6.10.1\mingw_64\bin\qml.exe %1
+D:\Software\QT\6.10.1\mingw_64\bin\qml.exe %1
