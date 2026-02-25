@@ -14,6 +14,8 @@ set(CMAKE_AUTORCC ON)
 add_executable(${PROJECT_NAME}
         main.cpp
         qml.qrc
+        MyClass.cpp
+        MyClass.h
 )
 
 # 导入库 Qt Quick
