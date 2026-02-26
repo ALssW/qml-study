@@ -2,51 +2,62 @@ import QtQuick
 import QtQuick.Controls
 // 导入 c++扩展类型
 import Cpp.MyPainter
+import QtQuick.Dialogs
 
 Window {
-    width: 400
-    height: 400
+    width: 800
+    height: 600
     visible: true
 
-    // c++扩展类型
     MyPainter {
-        id: cppType1
-        objectName: "cppObject"
-        name: "cppType1-name"
-        // 绑定信号
-        onNameChanged: print("onNameChanged cppType1.name: " + name)
-        onUrlChanged: print("onUrlChanged: " + url)
+        id: myPainter
+        anchors.fill: parent
 
-        // 绑定信号
-        onPlayed: print("cpp signal emit")
+        MouseArea {
+            anchors.fill: parent
+            hoverEnabled: true
+            // 鼠标按下 记录开始位置
+            onPressed: {
+                myPainter.beginPaint(Qt.point(mouse.x, mouse.y))
+            }
+
+            onPositionChanged: {
+                // 按下左键
+                if (!mouse.buttons & Qt.LeftButton) {
+                    return;
+                }
+
+                myPainter.movePaint(Qt.point(mouse.x, mouse.y))
+            }
+        }
+
+        Row {
+            spacing: 10
+            Slider {
+                from: 1
+                to: 100
+                value: myPainter.penSize
+                onValueChanged: myPainter.penSize = value
+            }
+            Text {
+                text: "画笔大小: " + myPainter.penSize
+            }
+
+            ColorDialog {
+                id: colorDialog
+                selectedColor: "lightblue"
+                onAccepted: myPainter.penColor = selectedColor
+            }
+            Rectangle {
+                width: 30
+                height: 30
+                color: colorDialog.selectedColor
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: colorDialog.open()
+                }
+            }
+        }
+
     }
-
-    Column {
-        Button {
-            property int count: 0
-            text: "print(cppType1.name)"
-            onClicked: {
-                print(cppType1.name)
-                cppType1.name = "tmp1" + count++
-            }
-        }
-
-        Button {
-            text: "print(cppType1.url)"
-            onClicked: {
-                cppType1.url = "123"
-            }
-        }
-
-        Button {
-            text: "call cpp function"
-            onClicked: {
-                cppType1.cppFunction()
-                // let ret = cppType1.getData(1, [1, 2, 3], {"1": "123", "2": "32"});
-                // print("ret: " + ret);
-            }
-        }
-    }
-
-
 }

@@ -1,7 +1,7 @@
 #include "MyPainter.h"
 
-MyPainter::MyPainter(QObject *parent)
-    : QObject{parent}
+MyPainter::MyPainter(QQuickPaintedItem* parent)
+    : QQuickPaintedItem { parent }
 {
     qDebug() << "Create MyPainter";
 }

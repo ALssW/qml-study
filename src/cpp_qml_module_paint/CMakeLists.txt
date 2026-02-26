@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.20)
 project(cpp_qml_module_paint)
 
 find_package(Qt6 COMPONENTS
-        Quick)
+        Quick QuickControls2)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
@@ -22,4 +22,5 @@ qt_add_qml_module(
 # 指定 qml 加载库的路径
 set(QML_IMPORT_PATH ${CMAKE_BINARY_DIR})
 
-target_link_libraries(${PROJECT_NAME} PRIVATE Qt6::Quick)
+target_link_libraries(${PROJECT_NAME}
+        PRIVATE Qt6::Quick Qt6::QuickControls2)

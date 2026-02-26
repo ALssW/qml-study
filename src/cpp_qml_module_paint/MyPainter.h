@@ -1,84 +1,77 @@
 #ifndef MYPAINTER_H
 #define MYPAINTER_H
 
-#include <QObject>
+#include <QPainter>
 #include <QQmlEngine>
+#include <QQuickPaintedItem>
 
-class MyPainter : public QObject
+// 继承 QQuickPaintedItem
+class MyPainter : public QQuickPaintedItem
 {
     Q_OBJECT
-
-    // 定义属性
-    Q_PROPERTY(QString name READ name WRITE setName REQUIRED NOTIFY nameChanged)
-    // 设置 url 与该类已有的成员属性 url_ 绑定 MEMBER 的 READER 生成时以及自动进行幂等判断
-    Q_PROPERTY(QString url MEMBER url_ NOTIFY urlChanged)
+    // 字体大小
+    Q_PROPERTY(int penSize MEMBER penSize_ NOTIFY penSizeChanged)
+    // 字体颜色
+    Q_PROPERTY(QColor penColor MEMBER penColor_ NOTIFY penColorChanged)
 
     QML_ELEMENT
 
 public:
-    explicit MyPainter(QObject* parent = nullptr);
-    // READ
-    QString name() const
+    explicit MyPainter(QQuickPaintedItem* parent = nullptr);
+
+    Q_INVOKABLE void beginPaint(QPoint pos)
     {
-        qDebug() << "MyPainter name() called";
-        return objectName();
+        lastPos_ = pos;
+        qDebug() << "beginPaint: pos:" << pos;
     }
 
-    // WRITE
-    void setName(const QString& name)
+    Q_INVOKABLE void movePaint(QPoint pos)
     {
-        // 防止重复触发 幂等判断
-        if (name == objectName())
+        // 初始化 img
+        if (img_.isNull())
         {
-            return;
+            img_ = QImage(this->width(), this->height(), QImage::Format_ARGB32);
         }
-
-        qDebug() << "CppType setName() called old name:" << objectName().toUtf8().data()
-            << ", new name set to:" << name.toUtf8().data();
-        setObjectName(name);
-        // 手动调用信号
-        emit nameChanged();
+        qDebug() << "movePaint: last pos:" << lastPos_ << ", pos:" << pos;
+        QPainter painter(&img_);
+        QPen pen;
+        pen.setStyle(Qt::SolidLine);
+        pen.setWidth(this->penSize_);
+        pen.setBrush(penColor_);
+        pen.setCapStyle(Qt::RoundCap);
+        pen.setJoinStyle(Qt::RoundJoin);
+        painter.setPen(pen);
+        painter.setRenderHints(QPainter::Antialiasing, true);
+        // 从 lastPos_ 开始画线
+        painter.drawLine(lastPos_, pos);
+        // 更新 lastPos_
+        lastPos_ = pos;
+        update();
     }
 
-    // 开放给 qml 的函数
-    Q_INVOKABLE void cppFunction()
-    {
-        qDebug() << "CppType cppFunction() called";
-        emit played();
-    }
-
-    // 传递三种类型 基础类型、数组类型、js对象
-    Q_INVOKABLE static QString getData(int index, const std::vector<int>& vec, const QVariantMap& map)
-    {
-        QString str = QString("CppType getDate() called, index:%1").arg(index);
-
-        str += ", vec:";
-        for (const int v : vec)
-        {
-            str += QString::number(v);
-            str += " ";
-        }
-
-        str += ", map:";
-        for (const auto& key : map.keys())
-        {
-            str += key + ":";
-            str += map[key].toString() + " ";
-        }
-
-        qDebug() << str;
-        return str;
-    }
 
 signals:
-    // 定义信号
-    void nameChanged();
-    void urlChanged();
-    // 在 qml 接收信号
-    void played();
+    void penSizeChanged();
+    void penColorChanged();
 
 private:
-    QString url_;
+    // 重写 paint
+    void paint(QPainter* painter) override
+    {
+        qDebug() << "paint";
+        // painter->drawText(QPoint(100, 100), "test paint");
+        if (!img_.isNull())
+        {
+            painter->drawImage(QPoint(0, 0), img_);
+        }
+    }
+
+    // 画图至 img 中，方便进行导出和撤销
+    QImage img_;
+    QPoint lastPos_;
+
+    int penSize_ = 2;
+    QColor penColor_ = QColor("lightblue");
 };
 
 #endif // MYPAINTER_H
